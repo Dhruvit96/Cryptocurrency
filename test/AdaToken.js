@@ -54,4 +54,72 @@ contract('AdaToken', (accounts) => {
             assert.equal(balance.toNumber(), 750000, 'deducts the amount from the sending account')
         })
     })
+
+    it('Approve tokens for delegated tranfer', () => {
+        return AdaToken.deployed().then((instance) => {
+            tokenInstance = instance;
+            return tokenInstance.approve.call(accounts[1], 100);
+        }).then((success) => {
+            assert.equal(success, true, 'true');
+            return tokenInstance.approve(accounts[1], 100);
+        }).then((receipt) => {
+            assert.equal(receipt.logs.length, 1, 'triggers one events')
+            assert.equal(receipt.logs[0].event, 'Approval', '"Approval event"')
+            assert.equal(receipt.logs[0].args._owner, accounts[0], "account 0")
+            assert.equal(receipt.logs[0].args._spender, accounts[1], "account 1")
+            assert.equal(receipt.logs[0].args._value, 100, "value")
+            return tokenInstance.allowance(accounts[0], accounts[1])
+        }).then((allowance) => {
+            assert.equal(allowance.toNumber(), 100, 'stores the allowance for delegated transfer')
+        })
+    })
+
+    it('handles delegated token transfer', () => {
+        return AdaToken.deployed().then((instance) => {
+            tokenInstance = instance;
+            from = accounts[2];
+            to = accounts[3];
+            spendingAccout = accounts[4];
+            // Transfer some tokens to fromAccount
+            return tokenInstance.transfer(from, 100, { from: accounts[0] });
+        }).then(() => {
+            // Approve spendingAccount to spend 10 token from fromAccount
+            return tokenInstance.approve(spendingAccout, 10, { from });
+        }).then(() => {
+            // Try transferring larger than the sender's balance
+            return tokenInstance.transferFrom(from, to, 7777, { from: spendingAccout });
+        }).then(assert.fail).catch((error) => {
+            assert(error.message.indexOf('revert') >= 0, 'cannot transfer larger than balance');
+            // Try transferring larger than the approved amount
+            return tokenInstance.transferFrom(from, to, 20, { from: spendingAccout });
+        }).then(assert.fail).catch((error) => {
+            assert(error.message.indexOf('revert') >= 0, 'cannot transfer larger than approved amount');
+            return tokenInstance.transferFrom(from, to, 10, { from: spendingAccout });
+        }).then((receipt) => {
+            assert.equal(receipt.logs.length, 1, 'triggers one events')
+            assert.equal(receipt.logs[0].event, 'Transfer', '"Transfer event"')
+            assert.equal(receipt.logs[0].args._from, from, "from account")
+            assert.equal(receipt.logs[0].args._to, to, "to account")
+            assert.equal(receipt.logs[0].args._value, 10, "value")
+            return tokenInstance.balanceOf(from)
+        }).then((balance) => {
+            assert.equal(balance.toNumber(), 90, 'deducts the amount from the sending account')
+            return tokenInstance.balanceOf(to)
+        }).then((balance) => {
+            assert.equal(balance.toNumber(), 10, 'adds the amount from the sending account')
+            return tokenInstance.allowance(from, to)
+        }).then((allowance) => {
+            assert.equal(allowance.toNumber(), 0, 'deducts the amount from the allowance')
+        })
+    })
+
+
+    //transactions
+    //for (let i = 0; i < 10; i++) {
+    //    if (typeof accounts[i] != "undefined") {
+    //        let ans = await tokenInstance.balanceOf(accounts[i])
+    //        console.log(accounts[i], ans.toNumber());
+    //    }
+    //}
+
 })
