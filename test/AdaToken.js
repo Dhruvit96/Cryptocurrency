@@ -112,14 +112,4 @@ contract('AdaToken', (accounts) => {
             assert.equal(allowance.toNumber(), 0, 'deducts the amount from the allowance')
         })
     })
-
-
-    //transactions
-    //for (let i = 0; i < 10; i++) {
-    //    if (typeof accounts[i] != "undefined") {
-    //        let ans = await tokenInstance.balanceOf(accounts[i])
-    //        console.log(accounts[i], ans.toNumber());
-    //    }
-    //}
-
 })
