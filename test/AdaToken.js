@@ -45,7 +45,6 @@ contract('AdaToken', (accounts) => {
             assert.equal(receipt.logs[0].args._from, accounts[0], "account 0")
             assert.equal(receipt.logs[0].args._to, accounts[1], "account 1")
             assert.equal(receipt.logs[0].args._value, 250000, "value")
-
             return tokenInstance.balanceOf(accounts[1]);
         }).then((balance) => {
             assert.equal(balance.toNumber(), 250000, 'add the amount to the receiving account')
