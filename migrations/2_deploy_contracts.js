@@ -1,5 +1,5 @@
-var AdaToken = artifacts.require("../contracts/AdaToken.sol");
-var AdaTokenSale = artifacts.require("../contracts/AdaTokenSale.sol");
+const AdaToken = artifacts.require("../contracts/AdaToken.sol");
+const AdaTokenSale = artifacts.require("../contracts/AdaTokenSale.sol");
 
 module.exports = function (deployer) {
   deployer.deploy(AdaToken, 1000000).then(() => {

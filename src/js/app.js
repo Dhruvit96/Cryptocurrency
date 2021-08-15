@@ -25,14 +25,14 @@ App = {
             App.contracts.AdaTokenSale = TruffleContract(AdaTokenSale);
             App.contracts.AdaTokenSale.setProvider(App.web3Provider);
             App.contracts.AdaTokenSale.deployed().then(function (AdaTokenSale) {
-                console.log("Hbc Token Sale Address:", AdaTokenSale.address);
+                console.log("Ada Token Sale Address:", AdaTokenSale.address);
             });
         }).done(function () {
             $.getJSON("AdaToken.json", function (AdaToken) {
                 App.contracts.AdaToken = TruffleContract(AdaToken);
                 App.contracts.AdaToken.setProvider(App.web3Provider);
                 App.contracts.AdaToken.deployed().then(function (AdaToken) {
-                    console.log("Hbc Token Address:", AdaToken.address);
+                    console.log("Ada Token Address:", AdaToken.address);
                 });
                 App.listenForEvents();
                 return App.render();
