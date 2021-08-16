@@ -9,7 +9,7 @@
     "scripts": {
       "dev": "lite-server"
     },
-    "author": "Dhruvit Maniya",
+    "author": "ADA",
     "license": "ISC",
     "devDependencies": {
       "lite-server": "^2.3.0"
